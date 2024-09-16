@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/GPTPlayground_FRONT/static/css/main.fcd31982.css",
+    "main.js": "/GPTPlayground_FRONT/static/js/main.5bb60544.js",
+    "static/js/787.c4e7f8f9.chunk.js": "/GPTPlayground_FRONT/static/js/787.c4e7f8f9.chunk.js",
+    "index.html": "/GPTPlayground_FRONT/index.html",
+    "main.fcd31982.css.map": "/GPTPlayground_FRONT/static/css/main.fcd31982.css.map",
+    "main.5bb60544.js.map": "/GPTPlayground_FRONT/static/js/main.5bb60544.js.map",
+    "787.c4e7f8f9.chunk.js.map": "/GPTPlayground_FRONT/static/js/787.c4e7f8f9.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.fcd31982.css",
+    "static/js/main.5bb60544.js"
+  ]
+}
