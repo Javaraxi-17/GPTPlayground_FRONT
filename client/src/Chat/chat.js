@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Login from './Login'; // Importamos el componente Login
-import Signup from './Signup'; // Importamos el componente Signup
 
 const examples = [
   'How to use Tailwind CSS',
@@ -42,17 +41,38 @@ const themes = {
     buttonContainerBg: 'bg-[#012e59]', // Color del contenedor de botones en tema azul
     warningText: 'text-[#041b30]', // Texto de advertencia en tema azul
   },
+  red: {  // Nuevo tema rojo
+    chatBg: 'bg-gradient-to-r from-[#7f0000] to-[#ff0000]', // Fondo de chat en tonos rojos
+    sidebarBg: 'bg-[#bf0000]', // Fondo de la barra lateral
+    inputBg: 'bg-[#990000]', // Fondo del cuadro de entrada de texto
+    userMessageBg: 'bg-[#b30000]', // Fondo del mensaje del usuario
+    assistantMessageBg: 'bg-[#e60000]', // Fondo del mensaje del asistente
+    exitBtnBg: 'bg-[#990000] hover:bg-[#7f0000]', // Botón exit
+    buttonContainerBg: 'bg-[#bf0000]', // Contenedor de botones
+    warningText: 'text-[#ffcccc]', // Texto de advertencia en tema rojo
+  },
+  purpleOrange: { // Nuevo tema
+    chatBg: 'bg-gradient-to-r from-[#4B0082] to-[#FFA500]', // Degradado de morado oscuro a naranja
+    sidebarBg: 'bg-[#780178]', // Fondo morado oscuro para la barra lateral
+    inputBg: 'bg-[#FF7F50]', // Naranja suave para la caja de entrada
+    userMessageBg: 'bg-[#db9107]', // Fondo del mensaje del usuario en morado
+    assistantMessageBg: 'bg-[#FF8C00]', // Fondo del mensaje del asistente en naranja oscuro
+    exitBtnBg: 'bg-[#590259] hover:bg-[#660d66]', // Botón exit en naranja
+    buttonContainerBg: 'bg-[#800080]', // Contenedor de botones en morado
+    warningText: 'text-[#FFE4B5]', // Texto de advertencia en un tono claro de naranja
+  },
 };
 
 const Chat = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false); // Estado de autenticación
-  const [isRegistering, setIsRegistering] = useState(false); // Estado para mostrar el signup
   const [chat, setChat] = useState([]);
   const [chatHistory, setChatHistory] = useState([]);
   const [title, setTitle] = useState('');
   const [input, setInput] = useState('');
   const [theme, setTheme] = useState(themes.dark); // Default theme
   const [showThemeSelector, setShowThemeSelector] = useState(false); // Control para mostrar el selector de tema
+  const [showModelSelector, setShowModelSelector] = useState(false); // Control para mostrar el modal de selección de modelo GPT
+  const [selectedModel, setSelectedModel] = useState('GPT-3'); // Estado para el modelo seleccionado
 
   // Referencia al contenedor del chat para el desplazamiento automático
   const chatContainerRef = useRef(null);
@@ -60,23 +80,19 @@ const Chat = () => {
   // Función para manejar el envío del mensaje
   const handleSend = async () => {
     if (input.trim()) {
-      setChat([...chat, { role: 'user', content: input }]);
+      const newMessage = { role: 'user', content: input };
+      setChat([...chat, newMessage]);
       setInput('');
       const response = await fetch('http://localhost:8000/api/chat', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          messages: [
-            ...chat,
-            { role: 'user', content: input },
-          ],
-        }),
+        body: JSON.stringify({ messages: [...chat, newMessage] }),
       });
 
       const aiRes = await response.text(); // Modificación para manejar la respuesta como texto
-      setChat([...chat, { role: 'user', content: input }, { role: 'assistant', content: aiRes }]);
+      setChat([...chat, newMessage, { role: 'assistant', content: aiRes }]);
 
       if (!title) {
         const createTitle = await fetch('http://localhost:8000/api/title', {
@@ -84,14 +100,12 @@ const Chat = () => {
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({
-            title: input,
-          }),
+          body: JSON.stringify({ title: input }),
         });
 
-        const title = await createTitle.json();
-        setTitle(title?.title);
-        setChatHistory([...chatHistory, title]);
+        const titleData = await createTitle.json();
+        setTitle(titleData?.title);
+        setChatHistory([...chatHistory, titleData]);
       }
     }
   };
@@ -99,11 +113,9 @@ const Chat = () => {
   // Función para manejar el evento "Enter" y "Shift + Enter"
   const handleKeyDown = (e) => {
     if (e.key === 'Enter') {
-      if (e.shiftKey) {
-        setInput(input + '\n');
-      } else {
+      if (!e.shiftKey) {
         e.preventDefault();
-        handleSend();
+        handleSend(); // Envía el mensaje si no es Shift + Enter
       }
     }
   };
@@ -115,50 +127,40 @@ const Chat = () => {
     }
   }, [chat]);
 
-  // Si el usuario no está logueado, mostramos la pantalla de Login o Signup según corresponda
+  // Si el usuario no está logueado, mostramos la pantalla de Login
   if (!isLoggedIn) {
-    if (isRegistering) {
-      return (
-        <Signup
-          onSignup={() => setIsRegistering(false)} // Después del registro, mostramos el login
-          onLogin={() => setIsRegistering(false)}  // Volver al login
-        />
-      );
-    }
-    return <Login onLogin={() => setIsLoggedIn(true)} onSignup={() => setIsRegistering(true)} />;
+    return <Login onLogin={() => setIsLoggedIn(true)} />;
   }
 
   return (
     <div className={`h-screen w-screen flex ${theme.chatBg}`}>
       {/* Panel izquierdo con color dinámico basado en el tema */}
       <div className={`w-[20%] h-screen ${theme.sidebarBg} text-white p-4 flex flex-col justify-between`}>
-        <div>
-          <div className='h-[5%]'>
-            <button className='w-full h-[50px] border rounded hover:bg-slate-600' onClick={() => {
-              setChat([]);
-              setTitle('');
-            }}>+ New Chat</button>
-          </div>
-          <div className='h-[70%] overflow-scroll shadow-lg hide-scroll-bar mb-4'>
-            {
-              chatHistory.map((item, index) => (
-                <div key={index} className='py-3 text-center rounded mt-4 text-lg font-light flex items-center px-8 hover:bg-slate-600 cursor-pointer'>
-                  <span className='mr-4'>
-                    <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-message" width="24" height="24" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" fill="none" strokeLinecap="round" strokeLinejoin="round">
-                      <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                      <path d="M8 9h8"></path>
-                      <path d="M8 13h6"></path>
-                      <path d="M18 4a3 3 0 0 1 3 3v8a3 3 0 0 1 -3 3h-5l-5 3v-3h-2a3 3 0 0 1 -3 -3v-8a3 3 0 0 1 3 -3h12z"></path>
-                    </svg>
-                  </span>
-                  <span className='text-left'>{item.title}</span>
-                </div>
-              ))
-            }
-          </div>
+        <div className="flex flex-col items-center">
+          {/* Logo centrado */}
+          <img src="/gptlogo.png" alt="GPT Logo" className="w-24 h-auto mb-4" />
+          <button className='w-full h-[50px] border rounded hover:bg-slate-600' onClick={() => {
+            setChat([]);
+            setTitle('');
+          }}>+ New Chat</button>
         </div>
-        {/* Agrupamos Theme, Code Settings y Exit en un mismo contenedor */}
-        <div className={`overflow-scroll shadow-lg hide-scroll-bar border-t p-4 rounded-lg ${theme.buttonContainerBg} flex flex-col`}>
+        <div className='h-[70%] overflow-scroll shadow-lg hide-scroll-bar mb-4'>
+          {chatHistory.map((item, index) => (
+            <div key={index} className='py-3 text-center rounded mt-4 text-lg font-light flex items-center px-8 hover:bg-slate-600 cursor-pointer'>
+              <span className='mr-4'>
+                <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-message" width="24" height="24" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" fill="none" strokeLinecap="round" strokeLinejoin="round">
+                  <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                  <path d="M8 9h8"></path>
+                  <path d="M8 13h6"></path>
+                  <path d="M18 4a3 3 0 0 1 3 3v8a3 3 0 0 1 -3 3h-5l-5 3v-3h-2a3 3 0 0 1 -3 -3v-8a3 3 0 0 1 3 -3h12z"></path>
+                </svg>
+              </span>
+              <span className='text-left'>{item.title}</span>
+            </div>
+          ))}
+        </div>
+        {/* Agrupamos Theme, Code Settings y Exit en un mismo contenedor, sin scroll */}
+        <div className={`border-t p-4 rounded-lg ${theme.buttonContainerBg} flex flex-col space-y-4`}>
           {/* Theme Selector */}
           <div className='py-3 text-center rounded text-lg font-light flex items-center px-8 hover:bg-slate-600 cursor-pointer' onClick={() => setShowThemeSelector(true)}>
             <span className='mr-4'>
@@ -170,8 +172,12 @@ const Chat = () => {
             </span>
             Theme
           </div>
+
           {/* Code Settings */}
-          <div className='py-3 text-center rounded text-lg font-light flex items-center px-8 hover:bg-slate-600 cursor-pointer'>
+          <div
+            className='py-3 text-center rounded text-lg font-light flex items-center px-8 hover:bg-slate-600 cursor-pointer'
+            onClick={() => setShowModelSelector(true)} // Abre el modal de selección de modelo
+          >
             <span className='mr-4'>
               <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-settings-code" width="24" height="24" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" fill="none" strokeLinecap="round" strokeLinejoin="round">
                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -183,6 +189,7 @@ const Chat = () => {
             </span>
             Code Settings
           </div>
+
           {/* Botón Exit */}
           <div className='mt-4'>
             <button className={`w-full h-[50px] border rounded ${theme.exitBtnBg} text-white`} onClick={() => {
@@ -231,7 +238,7 @@ const Chat = () => {
             :
             (
               <div className='h-[80%] flex flex-col justify-center items-center text-white'>
-                <div className='text-4xl font-bold mb-8'>APP GPT</div>
+                <div className='text-4xl font-bold mb-8'>NOVA GPT</div>
                 <div className='flex flex-wrap justify-around max-w-[900px]'>
                   {
                     examples.map((item, index) => (
@@ -263,10 +270,38 @@ const Chat = () => {
               </span>
             </div>
             {/* Texto de advertencia dinámico basado en el tema */}
-            <small className={`mt-2 ${theme.warningText}`}>La IA puede cometer algunos errores.</small>
+            <small className={`mt-2 ${theme.warningText}`}>The AI can make some mistakes</small>
           </div>
         </div>
       </div>
+
+      {/* Modal para seleccionar modelo GPT */}
+      {showModelSelector && (
+        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-75">
+          <div className="bg-white p-6 rounded-lg max-w-md w-full">
+            <h2 className="text-lg font-bold mb-4">Enter the desired model</h2>
+            <div className="space-y-4">
+              <select
+                className="w-full py-2 border rounded text-black"
+                value={selectedModel}
+                onChange={(e) => setSelectedModel(e.target.value)}
+              >
+                <option value="GPT-1">GPT-1</option>
+                <option value="GPT-2">GPT-2</option>
+                <option value="GPT-3">GPT-3</option>
+              </select>
+            </div>
+            <div className="flex justify-end mt-4">
+              <button className="mr-4 text-blue-500" onClick={() => setShowModelSelector(false)}>
+                Cancel
+              </button>
+              <button className="text-blue-500" onClick={() => setShowModelSelector(false)}>
+                Confirm
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Modal para seleccionar tema */}
       {showThemeSelector && (
@@ -277,6 +312,8 @@ const Chat = () => {
               <button className="w-full py-2 bg-gradient-to-r from-[#08080d] to-[#383869] text-white rounded" onClick={() => { setTheme(themes.dark); setShowThemeSelector(false); }}>Dark Theme</button>
               <button className="w-full py-2 bg-gradient-to-r from-[#b2b2d1] to-[#5353ad] text-black rounded" onClick={() => { setTheme(themes.light); setShowThemeSelector(false); }}>Light Theme</button>
               <button className="w-full py-2 bg-gradient-to-r from-[#001f3f] to-[#0074D9] text-white rounded" onClick={() => { setTheme(themes.blue); setShowThemeSelector(false); }}>Blue Theme</button>
+              <button className="w-full py-2 bg-gradient-to-r from-[#7f0000] to-[#ff0000] text-white rounded" onClick={() => { setTheme(themes.red); setShowThemeSelector(false); }}>Red Theme</button>
+              <button className="w-full py-2 bg-gradient-to-r from-[#4B0082] to-[#FFA500] text-white rounded" onClick={() => { setTheme(themes.purpleOrange); setShowThemeSelector(false); }}>Purple Orange Theme</button>
             </div>
             <button className="mt-4 text-red-500" onClick={() => setShowThemeSelector(false)}>Cancel</button>
           </div>

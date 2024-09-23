@@ -1,60 +1,40 @@
-import React, { useState } from 'react';
+import React from 'react';
 
-const Login = ({ onLogin, onSignup }) => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-
-  const handleLogin = (e) => {
-    e.preventDefault();
-    // Aquí iría tu lógica de autenticación
-    onLogin(true); // Simulamos que el login fue exitoso
+const Login = ({ onLogin }) => {
+  // Función para manejar el inicio de sesión simulado con Google
+  const handleGoogleLogin = () => {
+    // Simula el inicio de sesión con Google y ejecuta onLogin para permitir el acceso al chat
+    onLogin();
   };
 
   return (
-    <div className="flex justify-center items-center h-screen bg-gradient-to-r from-[#08080d] to-[#383869]">
-      <div className="w-full max-w-md p-8 bg-[#0c0c15] text-white rounded-lg shadow-md">
-        <h2 className="text-3xl mb-6 text-center">Login</h2>
-        <form onSubmit={handleLogin}>
-          <div className="mb-4">
-            <label className="block mb-2 text-sm font-bold" htmlFor="email">Email</label>
-            <input
-              type="email"
-              id="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              className="w-full p-3 rounded bg-[#1a1a2e] text-white"
-            />
-          </div>
-          <div className="mb-6">
-            <label className="block mb-2 text-sm font-bold" htmlFor="password">Password</label>
-            <input
-              type="password"
-              id="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              className="w-full p-3 rounded bg-[#1a1a2e] text-white"
-            />
-          </div>
-          <div className="flex items-center justify-between">
-            <button
-              type="submit"
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-            >
-              Login
-            </button>
-          </div>
-        </form>
-        <div className="mt-6 text-center">
-          <p>Don't have an account?</p>
+    <div className="relative flex h-screen bg-gradient-to-r from-[#08080d] to-[#383869]">
+      <div className="w-1/2 flex justify-center items-center relative">
+        {/* Columna izquierda: Formulario de login */}
+        <div className="w-full max-w-md p-9 bg-[#0c0c15] text-white rounded-lg shadow-lg h-[400px] flex flex-col justify-between">
+          
+          {/* Texto "NOVA" centrado en la parte superior del recuadro */}
+          <h1 className="text-6xl font-bold text-center mb-4">NOVA</h1>
+
+          <h2 className="text-5xl mt-0 text-center">Access with your Google account</h2>
+
+          {/* Botón de inicio de sesión con la imagen de Google */}
           <button
-            onClick={onSignup}
-            className="text-blue-400 hover:text-blue-500 mt-2"
+            onClick={handleGoogleLogin}
+            className="flex items-center justify-center w-full bg-white hover:bg-gray-200 text-white font-bold py-5 px-4 rounded mb-8"
           >
-            Sign up here
+            <img src="/google.png" alt="Google Logo" className="h-6 w-6" />
           </button>
         </div>
+      </div>
+
+      {/* Columna derecha: Imagen del logo de GPT */}
+      <div className="w-1/2 flex justify-center items-center">
+        <img
+          src="/gptlogo.png"
+          alt="GPT Logo"
+          className="max-w-full h-auto transition-transform duration-300 transform hover:scale-110" // Efecto de hover
+        />
       </div>
     </div>
   );
