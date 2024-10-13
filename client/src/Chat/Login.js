@@ -21,7 +21,7 @@ const Login = ({ onLogin }) => {
             onClick={handleGoogleLogin}
             className="flex items-center justify-center w-full bg-white hover:bg-gray-200 text-black font-bold py-5 px-4 rounded-full shadow-lg transition duration-300 ease-in-out transform hover:scale-105"
           >
-            <img src="/google.png" alt="Google Logo" className="h-6 w-6 mr-2" />
+            <img src="https://raw.githubusercontent.com/Javaraxi-17/GPTPlayground_FRONT/main/client/public/google.png" alt="Google Logo" className="h-6 w-6 mr-2" />
             Sign in with Google
           </button>
         </div>
@@ -30,7 +30,7 @@ const Login = ({ onLogin }) => {
       {/* Columna derecha: Imagen del logo de GPT */}
       <div className="w-1/2 flex justify-center items-center">
         <img
-          src="/gptlogo.png"
+          src="https://raw.githubusercontent.com/Javaraxi-17/GPTPlayground_FRONT/main/client/public/gptlogo.png"
           alt="GPT Logo"
           className="max-w-full h-auto transition-transform duration-300 transform hover:scale-110"
         />

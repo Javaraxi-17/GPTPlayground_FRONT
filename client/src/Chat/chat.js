@@ -227,7 +227,7 @@ const animateAssistantResponse = (responseText) => {
       <div className={`w-[20%] h-screen ${theme.sidebarBg} text-white p-4 flex flex-col justify-between`}>
         <div className="flex flex-col items-center">
           {/* Logo centrado */}
-          <img src="/gptlogo.png" alt="GPT Logo" className="w-24 h-auto mb-4" />
+          <img src="https://raw.githubusercontent.com/Javaraxi-17/GPTPlayground_FRONT/main/client/public/gptlogo.png" alt="GPT Logo" className="w-24 h-auto mb-4" />
           <button
             className="w-full h-[50px] border rounded-full hover:bg-slate-600"
             onClick={() => {
