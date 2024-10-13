@@ -1,3 +1,4 @@
+// Loading.js
 import React from 'react';
 
 const Loading = () => {
@@ -6,7 +7,7 @@ const Loading = () => {
       <img
         src="/gptlogo.png"
         alt="Loading..."
-        className="h-32 w-32 animate-spin-scale" // Aplica la animación de carga
+        className="h-32 w-32 animate-spin-scale"
       />
     </div>
   );

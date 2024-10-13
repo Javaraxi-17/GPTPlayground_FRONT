@@ -1,21 +1,19 @@
+// App.js
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
 import Chat from './Chat/chat';
 import Login from './Chat/Login';
-import Loading from './Chat/Loading'; // Importamos el componente Loading
+import Loading from './Chat/Loading'; // Importar el componente Loading
 
 function App() {
-  // Estado para manejar si el usuario está autenticado
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [isLoading, setIsLoading] = useState(false); // Nuevo estado para manejar la pantalla de carga
 
-  // Simulación de carga para la transición entre Login y Chat
   const handleLogin = () => {
-    setIsLoading(true); // Activar la pantalla de carga
-    setTimeout(() => {
-      setIsLoggedIn(true); // Simulamos la autenticación
-      setIsLoading(false); // Desactivar la pantalla de carga
-    }, 2000); // Esperar 2 segundos
+    setIsLoggedIn(true); // Cambia el estado a logueado cuando inicia sesión
+  };
+
+  const handleLogout = () => {
+    setIsLoggedIn(false); // Cambia el estado a no logueado cuando cierra sesión
   };
 
   return (
@@ -23,17 +21,18 @@ function App() {
       <Routes>
         {/* Ruta para login */}
         <Route path="/login" element={
-          isLoading ? <Loading /> : <LoginPage isLoggedIn={isLoggedIn} onLogin={handleLogin} />
+          <LoginPage isLoggedIn={isLoggedIn} onLogin={handleLogin} />
         } />
 
+        {/* Ruta para loading */}
+        <Route path="/auth/google/callback" element={<LoadingPage onLogin={handleLogin} />} />
+
         {/* Ruta para chat */}
-        <Route path="/chat" element={
-          isLoading ? <Loading /> : <ChatPage isLoggedIn={isLoggedIn} />
-        } />
+        <Route path="/chat" element={<Chat onLogout={handleLogout} />} />
 
         {/* Redirigir la ruta raíz a /login */}
         <Route path="/" element={
-          isLoading ? <Loading /> : <LoginPage isLoggedIn={isLoggedIn} onLogin={handleLogin} />
+          <LoginPage isLoggedIn={isLoggedIn} onLogin={handleLogin} />
         } />
       </Routes>
     </Router>
@@ -45,27 +44,30 @@ const LoginPage = ({ isLoggedIn, onLogin }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Si el usuario ya está autenticado, redirige a /chat
     if (isLoggedIn) {
-      navigate('/chat');
+      navigate('/auth/google/callback'); // Redirigir a la pantalla de carga si ya está autenticado
     }
   }, [isLoggedIn, navigate]);
 
   return <Login onLogin={onLogin} />;
 };
 
-// Componente para manejar el chat
-const ChatPage = ({ isLoggedIn }) => {
+// Componente para manejar la pantalla de carga
+const LoadingPage = ({ onLogin }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Si el usuario no está autenticado, redirige a /login
-    if (!isLoggedIn) {
-      navigate('/login');
-    }
-  }, [isLoggedIn, navigate]);
+    onLogin(); // Marcar al usuario como loggeado
 
-  return <Chat />;
+    // Simular un pequeño retraso de carga, luego redirigir al chat
+    const timer = setTimeout(() => {
+      navigate('/chat'); // Redirigir al chat después de la animación
+    }, 2000);
+
+    return () => clearTimeout(timer); // Limpiar el timeout si se desmonta
+  }, [onLogin, navigate]);
+
+  return <Loading />;
 };
 
 export default App;

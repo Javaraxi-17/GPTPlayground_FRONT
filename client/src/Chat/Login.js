@@ -1,29 +1,28 @@
 import React from 'react';
 
 const Login = ({ onLogin }) => {
-  // Función para manejar el inicio de sesión simulado con Google
+
   const handleGoogleLogin = () => {
-    // Simula el inicio de sesión con Google y ejecuta onLogin para permitir el acceso al chat
-    onLogin();
+    // Redirigir a la URL externa antes de cualquier otra acción
+    window.location.href = 'https://gpt-playground-932770499416.us-central1.run.app/auth/google';
   };
 
   return (
     <div className="relative flex h-screen bg-gradient-to-r from-[#08080d] to-[#383869]">
       <div className="w-1/2 flex justify-center items-center relative">
-        {/* Columna izquierda: Formulario de login */}
-        <div className="w-full max-w-md p-9 bg-[#0c0c15] text-white rounded-lg shadow-lg h-[400px] flex flex-col justify-between">
-          
+        {/* Cambiar a contornos más redondeados */}
+        <div className="w-full max-w-md p-9 bg-[#0c0c15] text-white rounded-3xl shadow-lg h-[400px] flex flex-col justify-between">
           {/* Texto "NOVA" centrado en la parte superior del recuadro */}
           <h1 className="text-6xl font-bold text-center mb-4">NOVA</h1>
-
           <h2 className="text-5xl mt-0 text-center">Access with your Google account</h2>
 
-          {/* Botón de inicio de sesión con la imagen de Google */}
+          {/* Botón de inicio de sesión con bordes más redondeados */}
           <button
             onClick={handleGoogleLogin}
-            className="flex items-center justify-center w-full bg-white hover:bg-gray-200 text-white font-bold py-5 px-4 rounded mb-8"
+            className="flex items-center justify-center w-full bg-white hover:bg-gray-200 text-black font-bold py-5 px-4 rounded-full shadow-lg transition duration-300 ease-in-out transform hover:scale-105"
           >
-            <img src="/google.png" alt="Google Logo" className="h-6 w-6" />
+            <img src="/google.png" alt="Google Logo" className="h-6 w-6 mr-2" />
+            Sign in with Google
           </button>
         </div>
       </div>
@@ -33,7 +32,7 @@ const Login = ({ onLogin }) => {
         <img
           src="/gptlogo.png"
           alt="GPT Logo"
-          className="max-w-full h-auto transition-transform duration-300 transform hover:scale-110" // Efecto de hover
+          className="max-w-full h-auto transition-transform duration-300 transform hover:scale-110"
         />
       </div>
     </div>
