@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/GPTPlayground_FRONT/static/css/main.40a17a46.css",
-    "main.js": "/GPTPlayground_FRONT/static/js/main.100de7d4.js",
+    "main.css": "/GPTPlayground_FRONT/static/css/main.760a8c6c.css",
+    "main.js": "/GPTPlayground_FRONT/static/js/main.74712e66.js",
     "static/js/787.c4e7f8f9.chunk.js": "/GPTPlayground_FRONT/static/js/787.c4e7f8f9.chunk.js",
     "index.html": "/GPTPlayground_FRONT/index.html",
-    "main.40a17a46.css.map": "/GPTPlayground_FRONT/static/css/main.40a17a46.css.map",
-    "main.100de7d4.js.map": "/GPTPlayground_FRONT/static/js/main.100de7d4.js.map",
+    "main.760a8c6c.css.map": "/GPTPlayground_FRONT/static/css/main.760a8c6c.css.map",
+    "main.74712e66.js.map": "/GPTPlayground_FRONT/static/js/main.74712e66.js.map",
     "787.c4e7f8f9.chunk.js.map": "/GPTPlayground_FRONT/static/js/787.c4e7f8f9.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.40a17a46.css",
-    "static/js/main.100de7d4.js"
+    "static/css/main.760a8c6c.css",
+    "static/js/main.74712e66.js"
   ]
 }
